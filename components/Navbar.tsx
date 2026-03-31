@@ -3,9 +3,16 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { useCartStore } from "@/store/useCartStore";
+import { CartItem } from "@/types/cart";
 
 const Navbar: React.FC = () => {
   const [user, setUser] = useState<any>(null);
+  const cart: CartItem[] = useCartStore((state) => state.cart);
+
+  console.log(cart);
+
+  const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
 
   useEffect(() => {
     // Get current session
@@ -16,9 +23,11 @@ const Navbar: React.FC = () => {
     getSession();
 
     // Listen for auth changes
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user ?? null);
+      },
+    );
 
     return () => {
       listener.subscription.unsubscribe();
@@ -54,28 +63,31 @@ const Navbar: React.FC = () => {
       {/* Actions */}
       <div className="flex items-center space-x-4">
         {/* Cart Icon */}
-        <button className="relative bg-orange-500 text-white p-2.5 rounded-full shadow-sm hover:bg-orange-600 transition">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M4 8h16l-1.5 10a2 2 0 01-2 1.5H7.5a2 2 0 01-2-1.5L4 8z"
-            />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M9 8V6a3 3 0 016 0v2"
-            />
-          </svg>
-          <span className="absolute -top-1 -right-1 bg-white text-orange-500 text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow">
-            3
+        <button className="relative text-orange-500 p-2.5 rounded-full hover:text-orange-600 transition">
+          <Link href="/checkout">
+            {" "}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4 8h16l-1.5 10a2 2 0 01-2 1.5H7.5a2 2 0 01-2-1.5L4 8z"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M9 8V6a3 3 0 016 0v2"
+              />
+            </svg>
+          </Link>
+          <span className="absolute -top-1 -right-1 bg-white text-orange-500 text-[12px] font-bold px-1.5 py-0.5 rounded-full">
+            {totalQty}
           </span>
         </button>
 
@@ -94,7 +106,10 @@ const Navbar: React.FC = () => {
           </>
         ) : (
           <>
-            <Link href="/login" className="text-gray-700 font-medium hover:text-orange-600">
+            <Link
+              href="/login"
+              className="text-gray-700 font-medium hover:text-orange-600"
+            >
               Log in
             </Link>
             <Link

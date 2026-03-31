@@ -15,6 +15,7 @@ const Menus = async () => {
         {menus.map((menu) => (
           <MenuItemCard
             key={menu.id}
+            id={menu.id}
             name={menu.name}
             description={menu.description}
             price={menu.price}

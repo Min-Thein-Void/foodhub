@@ -12,14 +12,6 @@ datasource db {
   provider = "postgresql"
 }
 
-model Model{
-  id Int @id @default(autoincrement())
-  name String @unique
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 model Menu {
   id          Int     @id @default(autoincrement())
   name        String
@@ -28,5 +20,41 @@ model Menu {
   image       String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  orderItems  OrderItem[]
 }
 
+model Order {
+  id           String       @id @default(cuid())
+  customerName String
+  phone        String
+  address      String
+  total        Float
+
+  status       OrderStatus  @default(pending)
+
+  items        OrderItem[]  // 🔥 relation
+
+  createdAt    DateTime     @default(now())
+}
+
+model OrderItem {
+  id        String   @id @default(cuid())
+
+  qty       Int
+  price     Float    // snapshot price (important 🔥)
+
+  // 🔗 relation to Order
+  order     Order    @relation(fields: [orderId], references: [id])
+  orderId   String
+
+  // 🔗 relation to Menu
+  menu      Menu     @relation(fields: [menuId], references: [id])
+  menuId    Int
+}
+
+enum OrderStatus {
+  pending
+  confirmed
+  delivered
+  cancelled
+}

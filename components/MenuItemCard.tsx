@@ -1,7 +1,12 @@
+"use client"
+
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { useCartStore } from "@/store/useCartStore";
 
 type MenuItemCardProps = {
+  id: number;
   name: string;
   description: string;
   price: number;
@@ -9,16 +14,22 @@ type MenuItemCardProps = {
 };
 
 const MenuItemCard: React.FC<MenuItemCardProps> = ({
+  id,
   name,
   description,
   price,
   image,
 }) => {
+
+  const addToCart = useCartStore((state)=>state.addToCart);
+
   return (
-    <div className="w-72 bg-white rounded-2xl shadow-sm hover:shadow-md ml-18 md:ml-0 transition duration-300 overflow-hidden border border-gray-100">
+     <div className="w-72 bg-white rounded-2xl shadow-sm hover:shadow-md ml-18 md:ml-0 transition duration-300 overflow-hidden border border-gray-100">
       {/* Image */}
       <div className="relative w-full h-56 bg-gray-50">
+         <Link href={`/menu/${id}`}>
         <Image src={image} alt={name} fill className="object-contain p-2" />
+        </Link>
       </div>
 
       {/* Content */}
@@ -35,7 +46,7 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({
             ${price.toFixed(2)}
           </span>
 
-          <button className="bg-orange-500 text-white p-2 rounded-full hover:bg-orange-600 transition">
+          <button onClick={()=>addToCart({id,name,price,image})} className="bg-orange-500 text-white p-2 rounded-full hover:bg-orange-600 transition">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-4 w-4"
