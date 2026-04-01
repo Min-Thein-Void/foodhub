@@ -2,6 +2,8 @@
 
 import { useCartStore } from "@/store/useCartStore";
 import { useState, ChangeEvent, FormEvent } from "react";
+import toast, { Toaster } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 type FormData = {
   name: string;
@@ -10,6 +12,7 @@ type FormData = {
 };
 
 function Checkout() {
+  const router = useRouter();
   const [formData, setFormData] = useState<FormData>({
     name: "",
     phone: "",
@@ -26,35 +29,56 @@ function Checkout() {
   };
 
   const cart = useCartStore((state) => state.cart);
+  const clearCart = useCartStore((state) => state.clearCart);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     const order = {
       ...formData,
       items: cart,
       total: cart.reduce((acc, item) => acc + item.price * item.qty, 0),
     };
 
-    const res = await fetch("/api/order", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(order),
-    });
+    const res = await toast.promise(
+      fetch("/api/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(order),
+      }),
+      {
+        loading: "Placing your order...",
+        success: "Orderအောင်မြင်စွာတင်ပြီးပါပြီ",
+        error: "Fail to place order, try again...",
+      },
+      {
+        style: {
+          border: "1px solid #713200",
+          padding: "16px",
+          color: "#713200",
+        },
+        iconTheme: {
+          primary: "#713200",
+          secondary: "#FFFAEE",
+        },
+      },
+    );
 
     if (!res.ok) {
       const text = await res.text();
-      console.error("API error:", text); 
-      alert("Failed to place order");
+      console.error("API error:", text);
+      toast.error("Fail to place order try again...");
       return;
     }
 
+    router.push("/menus");
     const data = await res.json();
-    console.log("Order placed:", data);
+    clearCart();
+    setFormData({ name: "", phone: "", address: "" });
   };
 
   return (
     <div className="w-full bg-white shadow-lg rounded-2xl p-6 border border-orange-100">
+      <Toaster position="top-center" reverseOrder={true} />
       <h2 className="text-xl font-semibold text-orange-600 mb-5">
         Checkout Details
       </h2>
