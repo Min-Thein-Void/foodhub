@@ -11,8 +11,9 @@ export async function POST(req: Request) {
     const description = formData.get("description") as string;
     const price = parseFloat(formData.get("price") as string);
     const image = formData.get("image") as File;
+    const categoryId = parseInt(formData.get("categoryId") as string); // 🔥 add this
 
-    if (!name || !description || isNaN(price) || !image) {
+    if (!name || !description || isNaN(price) || !image || isNaN(categoryId)) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
@@ -33,6 +34,14 @@ export async function POST(req: Request) {
         description,
         price,
         image: `/uploads/${fileName}`,
+
+        // 🔗 connect category
+        category: {
+          connect: { id: categoryId },
+        },
+      },
+      include: {
+        category: true, // optional (response မှာပါလာမယ်)
       },
     });
 

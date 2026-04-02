@@ -7,6 +7,14 @@ import { useCartStore } from "@/store/useCartStore";
 import { CartItem } from "@/types/cart";
 import Image from "next/image";
 import toast, { Toaster } from "react-hot-toast";
+import ThemeToggle from "@/components/ThemeToggle";
+
+const navItems = [
+  { href: "/", label: "Home" },
+  { href: "/menus", label: "Menus" },
+  { href: "/about", label: "About" },
+  { href: "#contact", label: "Creator" },
+];
 
 const Navbar: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -16,50 +24,55 @@ const Navbar: React.FC = () => {
 
   const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
 
- useEffect(() => {
-  const getSession = async () => {
-    const { data } = await supabase.auth.getSession();
-    setUser(data.session?.user ?? null);
-    setLoading(false); // ✅ done loading
-  };
-  getSession();
+  useEffect(() => {
+    const fetchSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      setUser(data.session?.user ?? null);
+      setLoading(false);
+    };
 
-  const { data: listener } = supabase.auth.onAuthStateChange(
-    (_event, session) => {
-      setUser(session?.user ?? null);
-      setLoading(false); // ✅ update on change
-    },
-  );
+    fetchSession();
 
-  return () => {
-    listener.subscription.unsubscribe();
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user ?? null);
+        setLoading(false);
+      },
+    );
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
+  }, []);
+
+  const performLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast.error("Logout failed. Please try again.");
+      return;
+    }
+
+    setUser(null);
+    toast.success("Logged out successfully.");
   };
-}, []);
-  const handleLogout = () => {
+
+  const confirmLogout = () => {
     toast((t) => (
-      <div className="flex flex-col gap-2">
-        <span>Are you sure you want to logout?</span>
-        <div className="flex gap-2 justify-end">
+      <div className="flex flex-col gap-3 rounded-2xl bg-white p-4 text-sm text-slate-700 dark:bg-slate-900 dark:text-slate-200 shadow-lg">
+        <p>Do you want to log out of FoodHub?</p>
+        <div className="flex justify-end gap-2">
           <button
             onClick={() => toast.dismiss(t.id)}
-            className="px-2 py-1 text-sm bg-gray-200 rounded"
+            className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800"
           >
             Cancel
           </button>
           <button
             onClick={async () => {
               toast.dismiss(t.id);
-              const { error } = await supabase.auth.signOut();
-
-              if (error) {
-                toast.error("Logout failed");
-                return;
-              }
-
-              setUser(null);
-              toast.success("Logged out successfully");
+              await performLogout();
             }}
-            className="px-2 py-1 text-sm bg-red-500 text-white rounded"
+            className="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-red-500"
           >
             Logout
           </button>
@@ -69,228 +82,152 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="flex items-center justify-between px-6 py-4 bg-white shadow-sm relative">
+    <header className="bg-white shadow-sm dark:bg-slate-900">
       <Toaster position="top-center" />
-      {/* Logo */}
-      <div className="flex">
-        <Image src="/foodlogo.png" alt="" width={75} height={40} />
-        <span className="text-2xl font-bold text-yellow-600 mt-1">hub</span>
-      </div>
-
-      {/* Desktop Navigation */}
-      <ul className="hidden md:flex space-x-8 text-amber-600 font-medium">
-        <Link href="/" className="hover:text-orange-600">
-          Home
-        </Link>
-        <Link href="/menus" className="hover:text-orange-600">
-          Our Menus
-        </Link>
-        <Link href="#about" className="hover:text-orange-600">
-          About Us
-        </Link>
-        <Link href="#contact" className="hover:text-orange-600">
-          Creator
-        </Link>
-      </ul>
-
-      {/* Actions */}
-      <div className="flex items-center space-x-4">
-        {/* Cart Icon */}
-        <Link
-          href="/checkout"
-          className="relative text-orange-500 p-2.5 rounded-full hover:text-orange-600 transition"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M4 8h16l-1.5 10a2 2 0 01-2 1.5H7.5a2 2 0 01-2-1.5L4 8z"
-            />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M9 8V6a3 3 0 016 0v2"
-            />
-          </svg>
-          <span className="absolute -top-1 -right-1 bg-white text-orange-500 text-[12px] font-bold px-1.5 py-0.5 rounded-full">
-            {totalQty}
-          </span>
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-6 lg:px-8">
+        <Link href="/" className="flex items-center gap-3">
+          <div className="relative h-12 w-12 overflow-hidden rounded-2xl bg-orange-100 dark:bg-orange-500/20">
+            <Image src="/foodlogo.png" alt="FoodHub logo" fill className="object-contain" />
+          </div>
+          <div>
+            <p className="text-lg font-semibold text-orange-600 dark:text-orange-300">FoodHub</p>
+            <p className="text-xs uppercase tracking-[0.25em] text-slate-400 dark:text-slate-500">Fresh meals, fast delivery</p>
+          </div>
         </Link>
 
-        {/* Auth Actions */}
-        {loading ? null : user  ? (
-          <>
-            <span className="text-purple-600 font-medium mr-3 border border-amber-300 px-2 rounded-2xl py-0.5">
-                  {user.user_metadata?.displayname || user.email}
-                </span>
-            <button
-              onClick={handleLogout}
-              aria-label="Logout"
-              className="md:flex hidden items-center justify-center px-1 py-2 rounded-md hover:text-red-600 transition text-red-500"
+        <nav className="hidden items-center gap-8 md:flex">
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="text-sm font-medium text-slate-600 transition hover:text-orange-600 dark:text-slate-200"
             >
-              <svg
-                className="w-6 h-6"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
+
+          <Link
+            href="/checkout"
+            className="hidden items-center gap-2 rounded-full bg-orange-50 px-4 py-2 text-sm font-semibold text-orange-700 transition hover:bg-orange-100 dark:bg-orange-500/10 dark:text-orange-200 md:inline-flex"
+          >
+            <span className="text-base">🧺</span>
+            <span>Cart</span>
+            <span className="rounded-full bg-orange-500 px-2 py-0.5 text-xs text-white">{totalQty}</span>
+          </Link>
+
+          {!loading && user ? (
+            <div className="hidden items-center gap-3 md:flex">
+              <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-sm font-medium text-amber-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
+                {user.user_metadata?.displayname || user.email}
+              </span>
+              <button
+                onClick={confirmLogout}
+                className="rounded-full border border-slate-200 px-3 py-2 text-sm font-semibold text-rose-600 transition hover:bg-rose-50 dark:border-slate-700 dark:text-rose-300 dark:hover:bg-slate-800"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M20 12H8m12 0-4 4m4-4-4-4M9 4H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h2"
-                />
-              </svg>
-            </button>
-          </>
-        ) : (
-          <>
-            <div className="md:flex gap-4 hidden">
-                 {/* Login */}
-                <Link
-                  href="/login"
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-md bg-orange-50 hover:text-orange-600  hover:bg-orange-100 transition"
-                >
-                  <span className="sm:inline text-amber-600">Login</span>
-                </Link>
+                Logout
+              </button>
+            </div>
+          ) : (
+            <div className="hidden items-center gap-3 md:flex">
+              <Link
+                href="/login"
+                className="rounded-full border border-orange-200 bg-orange-50 px-4 py-2 text-sm font-medium text-orange-700 transition hover:bg-orange-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+              >
+                Login
+              </Link>
+              <Link
+                href="/register"
+                className="rounded-full bg-orange-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-orange-600"
+              >
+                Sign Up
+              </Link>
+            </div>
+          )}
 
-                {/* Sign Up */}
-                <Link
-                  href="/register"
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-md bg-orange-500 text-white hover:bg-orange-600 shadow-sm transition"
-                >
-                  <span className="sm:inline">Sign Up</span>
-                </Link>
-               </div>
-          </>
-        )}
-
-        {/* Mobile Menu Button */}
-        <button
-          className="md:hidden text-amber-600 focus:outline-none"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          {/* Hamburger Icon */}
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
+          <button
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-700 transition hover:border-orange-300 hover:text-orange-600 dark:border-slate-700 dark:text-slate-200 md:hidden"
+            onClick={() => setIsOpen((prev) => !prev)}
+            aria-label="Toggle mobile menu"
           >
             {isOpen ? (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M6 18L18 6M6 6l12 12"
-              />
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
             ) : (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M4 6h16M4 12h16M4 18h16"
-              />
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
             )}
-          </svg>
-        </button>
+          </button>
+        </div>
       </div>
 
-      {/* Mobile Dropdown */}
       {isOpen && (
-        <div className="absolute top-full left-0 w-full bg-white shadow-md md:hidden">
-          <ul className="flex flex-col items-center space-y-4 py-6 text-amber-600 font-medium">
-            <Link
-              href="/"
-              onClick={() => setIsOpen(false)}
-              className="w-full text-center py-2 hover:bg-orange-50 hover:text-orange-600 transition rounded-md"
-            >
-              Home
-            </Link>
-            <Link
-              href="/menus"
-              onClick={() => setIsOpen(false)}
-              className="w-full text-center py-2 hover:bg-orange-50 hover:text-orange-600 transition rounded-md"
-            >
-              Our Menus
-            </Link>
-            <Link
-              href="#about"
-              onClick={() => setIsOpen(false)}
-              className="w-full text-center py-2 hover:bg-orange-50 hover:text-orange-600 transition rounded-md"
-            >
-              About Us
-            </Link>
-            <Link
-              href="#contact"
-              onClick={() => setIsOpen(false)}
-              className="w-full text-center py-2 hover:bg-orange-50 hover:text-orange-600 transition rounded-md"
-            >
-              Creator
-            </Link>
-          </ul>
+        <div className="border-t border-slate-200 bg-white px-4 py-4 shadow-sm dark:border-slate-700 dark:bg-slate-950 md:hidden">
+          <div className="flex flex-col gap-4">
+            {navItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setIsOpen(false)}
+                className="rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-orange-50 dark:text-slate-200 dark:hover:bg-slate-800"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
 
-          {/* Logout Button */}
-          <div className="flex justify-center pb-6">
-            {loading ? null : user  ? (
-              <>
-                <span className="text-purple-600 font-medium mt-1.5 mr-3 border border-amber-300 px-2 rounded-2xl py-0.5">
+          <div className="mt-4 flex flex-col gap-3 border-t border-slate-200 pt-4 dark:border-slate-700">
+            <Link
+              href="/checkout"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center justify-between rounded-2xl bg-orange-50 px-4 py-3 text-sm font-semibold text-orange-700 transition hover:bg-orange-100 dark:bg-orange-500/10 dark:text-orange-200"
+            >
+              <span>Cart</span>
+              <span className="rounded-full bg-orange-500 px-2 py-0.5 text-xs text-white">{totalQty}</span>
+            </Link>
+
+            {!loading && user ? (
+              <div className="flex flex-col gap-3">
+                <span className="rounded-2xl bg-slate-100 px-4 py-3 text-sm font-medium text-slate-700 dark:bg-slate-800 dark:text-slate-200">
                   {user.user_metadata?.displayname || user.email}
                 </span>
                 <button
-                  onClick={handleLogout}
-                  aria-label="Logout"
-                  className="flex items-center justify-center px-1 py-2 rounded-md hover:text-red-600 transition text-red-500"
+                  onClick={() => {
+                    confirmLogout();
+                    setIsOpen(false);
+                  }}
+                  className="rounded-2xl bg-rose-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-rose-500"
                 >
-                  <svg
-                    className="w-6 h-6"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M20 12H8m12 0-4 4m4-4-4-4M9 4H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h2"
-                    />
-                  </svg>
+                  Logout
                 </button>
-              </>
+              </div>
             ) : (
-              <>
-               <div className="flex gap-4">
-                 {/* Login */}
+              <div className="grid gap-3 sm:grid-cols-2">
                 <Link
                   href="/login"
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-md bg-orange-50 hover:text-orange-600  hover:bg-orange-100 transition"
+                  onClick={() => setIsOpen(false)}
+                  className="rounded-2xl border border-slate-200 px-4 py-3 text-center text-sm font-medium text-slate-700 transition hover:bg-slate-100 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
                 >
-                  <span className="sm:inline text-amber-600">Login</span>
+                  Login
                 </Link>
-
-                {/* Sign Up */}
                 <Link
                   href="/register"
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-md bg-orange-500 text-white hover:bg-orange-600 shadow-sm transition"
+                  onClick={() => setIsOpen(false)}
+                  className="rounded-2xl bg-orange-500 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-orange-600"
                 >
-                  <span className="sm:inline">Sign Up</span>
+                  Sign Up
                 </Link>
-               </div>
-              </>
+              </div>
             )}
           </div>
         </div>
       )}
-    </nav>
+    </header>
   );
 };
 

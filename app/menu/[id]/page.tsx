@@ -14,7 +14,9 @@ export default async function page({
   }
 
   const menu = await prisma.menu.findUnique({
-    where: { id: menuId },
+    where: { id: menuId },include: {
+      category: true, 
+    },
   });
 
   if (!menu) {
