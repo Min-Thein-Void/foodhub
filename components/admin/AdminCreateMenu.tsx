@@ -84,9 +84,9 @@ function AdminCreateMenu() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-white shadow-lg rounded-xl p-4 md:p-8">
+    <div className="max-w-2xl mx-auto bg-white shadow-lg rounded-xl p-4 md:p-8 dark:bg-slate-900">
       <div className="mb-4 md:mb-6">
-        <Link href="/admin" className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium text-sm md:text-base">
+        <Link href="/admin" className="inline-flex items-center text-blue-600 hover:text-blue-800 dark:text-blue-300 dark:hover:text-blue-200 font-medium text-sm md:text-base">
           <svg className="w-4 h-4 md:w-5 md:h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
@@ -94,17 +94,17 @@ function AdminCreateMenu() {
         </Link>
       </div>
 
-      <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 md:mb-8">Create New Menu Item</h1>
+      <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 md:mb-8 dark:text-white">Create New Menu Item</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
         {/* Name */}
         <div>
-          <label className="block text-gray-700 font-semibold mb-2 text-sm md:text-base">Menu Name</label>
+          <label className="block text-gray-700 font-semibold mb-2 text-sm md:text-base dark:text-slate-200">Menu Name</label>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 md:px-4 py-2 md:py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm md:text-base"
+            className="w-full border border-gray-300 rounded-lg bg-white px-3 md:px-4 py-2 md:py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm md:text-base dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100"
             placeholder="Enter menu item name"
             required
           />
@@ -112,11 +112,11 @@ function AdminCreateMenu() {
 
         {/* Description */}
         <div>
-          <label className="block text-gray-700 font-semibold mb-2 text-sm md:text-base">Description</label>
+          <label className="block text-gray-700 font-semibold mb-2 text-sm md:text-base dark:text-slate-200">Description</label>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 md:px-4 py-2 md:py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent h-24 md:h-32 resize-none text-sm md:text-base"
+            className="w-full border border-gray-300 rounded-lg bg-white px-3 md:px-4 py-2 md:py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent h-24 md:h-32 resize-none text-sm md:text-base dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100"
             placeholder="Enter menu item description"
             required
           />
@@ -124,14 +124,14 @@ function AdminCreateMenu() {
 
         {/* Price */}
         <div>
-          <label className="block text-gray-700 font-semibold mb-2 text-sm md:text-base">Price ($)</label>
+          <label className="block text-gray-700 font-semibold mb-2 text-sm md:text-base dark:text-slate-200">Price ($)</label>
           <input
             type="number"
             step="0.01"
             min="0"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 md:px-4 py-2 md:py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm md:text-base"
+            className="w-full border border-gray-300 rounded-lg bg-white px-3 md:px-4 py-2 md:py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm md:text-base dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100"
             placeholder="0.00"
             required
           />
@@ -139,11 +139,11 @@ function AdminCreateMenu() {
 
         {/* Category Select */}
         <div>
-          <label className="block text-gray-700 font-semibold mb-2 text-sm md:text-base">Category</label>
+          <label className="block text-gray-700 font-semibold mb-2 text-sm md:text-base dark:text-slate-200">Category</label>
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 md:px-4 py-2 md:py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm md:text-base"
+            className="w-full border border-gray-300 rounded-lg bg-white px-3 md:px-4 py-2 md:py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm md:text-base dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100"
             required
           >
             <option value="">Select a category</option>
@@ -157,8 +157,8 @@ function AdminCreateMenu() {
 
         {/* Image */}
         <div>
-          <label className="block text-gray-700 font-semibold mb-2 text-sm md:text-base">Menu Image</label>
-          <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 md:p-6 text-center hover:border-blue-400 transition-colors">
+          <label className="block text-gray-700 font-semibold mb-2 text-sm md:text-base dark:text-slate-200">Menu Image</label>
+          <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 md:p-6 text-center hover:border-blue-400 transition-colors bg-white dark:bg-slate-800 dark:border-slate-700">
             <input
               type="file"
               accept="image/*"
@@ -178,7 +178,7 @@ function AdminCreateMenu() {
             </label>
           </div>
           {imageFile && (
-            <p className="mt-2 text-xs md:text-sm text-gray-600">Selected: {imageFile.name}</p>
+            <p className="mt-2 text-xs md:text-sm text-gray-600 dark:text-slate-300">Selected: {imageFile.name}</p>
           )}
         </div>
 

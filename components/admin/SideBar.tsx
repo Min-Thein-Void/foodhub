@@ -12,9 +12,9 @@ function SideBar() {
       {/* Mobile Menu Button */}
       <button
         onClick={() => setIsMobileOpen(!isMobileOpen)}
-        className="fixed top-20 left-4 z-20 md:hidden p-2 bg-gray-100/50 hover:bg-gray-200 rounded-md transition-colors"
+        className="fixed top-20 left-4 z-20 md:hidden p-2 bg-gray-100/50 hover:bg-gray-200 rounded-md transition-colors dark:bg-slate-800/70 dark:hover:bg-slate-700"
       >
-        <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-6 h-6 text-gray-600 dark:text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isMobileOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
         </svg>
       </button>
@@ -30,12 +30,12 @@ function SideBar() {
       {/* Sidebar */}
       <div className={`
         ${isCollapsed ? 'w-16' : 'w-64'} 
-        fixed top-0 left-0 h-screen bg-white shadow-lg border-r border-gray-200 
+        fixed top-0 left-0 h-screen bg-white shadow-lg border-r border-gray-200 dark:bg-slate-950 dark:border-slate-800 
         transition-all duration-300 ease-in-out z-40
         ${isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
         <div className="p-4 md:p-6 flex items-center justify-between">
-          {!isCollapsed && <h2 className="text-lg md:text-xl font-bold text-gray-800">Admin Panel</h2>}
+          {!isCollapsed && <h2 className="text-lg md:text-xl font-bold text-gray-800 dark:text-white">Admin Panel</h2>}
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="hidden md:block p-2 rounded-lg hover:bg-gray-100 transition-colors"
@@ -58,7 +58,7 @@ function SideBar() {
           <li>
             <Link
               href="/admin"
-              className={`flex items-center ${isCollapsed ? 'justify-center p-3' : 'p-3'} text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors`}
+              className={`flex items-center ${isCollapsed ? 'justify-center p-3' : 'p-3'} text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors dark:text-slate-200 dark:hover:bg-slate-800 dark:hover:text-blue-300`}
               onClick={() => setIsMobileOpen(false)}
             >
             <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -70,7 +70,7 @@ function SideBar() {
           <li>
             <Link
               href="/admin/orders"
-              className={`flex items-center ${isCollapsed ? 'justify-center p-3' : 'p-3'} text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors`}
+              className={`flex items-center ${isCollapsed ? 'justify-center p-3' : 'p-3'} text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors dark:text-slate-200 dark:hover:bg-slate-800 dark:hover:text-blue-300`}
               onClick={() => setIsMobileOpen(false)}
             >
             <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -82,7 +82,7 @@ function SideBar() {
           <li>
             <Link
               href="/admin/customers"
-              className={`flex items-center ${isCollapsed ? 'justify-center p-3' : 'p-3'} text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors`}
+              className={`flex items-center ${isCollapsed ? 'justify-center p-3' : 'p-3'} text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors dark:text-slate-200 dark:hover:bg-slate-800 dark:hover:text-blue-300`}
               onClick={() => setIsMobileOpen(false)}
             >
             <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -94,7 +94,7 @@ function SideBar() {
           <li>
             <Link
               href="/admin/menus"
-              className={`flex items-center ${isCollapsed ? 'justify-center p-3' : 'p-3'} text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors`}
+              className={`flex items-center ${isCollapsed ? 'justify-center p-3' : 'p-3'} text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors dark:text-slate-200 dark:hover:bg-slate-800 dark:hover:text-blue-300`}
               onClick={() => setIsMobileOpen(false)}
             >
               <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -106,7 +106,7 @@ function SideBar() {
           <li>
             <Link
               href="/admin/createmenu"
-              className={`flex items-center ${isCollapsed ? 'justify-center p-3' : 'p-3'} text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors`}
+              className={`flex items-center ${isCollapsed ? 'justify-center p-3' : 'p-3'} text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors dark:text-slate-200 dark:hover:bg-slate-800 dark:hover:text-blue-300`}
               onClick={() => setIsMobileOpen(false)}
             >
             <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

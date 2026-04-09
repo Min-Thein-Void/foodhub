@@ -1,9 +1,10 @@
 "use client";
 
 import { useCartStore } from "@/store/useCartStore";
-import { useState, ChangeEvent, FormEvent } from "react";
+import { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabaseClient";
 
 type FormData = {
   name: string;
@@ -18,6 +19,8 @@ function Checkout() {
     phone: "",
     address: "",
   });
+  const [user, setUser] = useState<any>(null);
+  const [authLoading, setAuthLoading] = useState(true);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -32,18 +35,62 @@ function Checkout() {
   const clearCart = useCartStore((state) => state.clearCart);
   const orderTotal = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
 
+  useEffect(() => {
+    const fetchSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      setUser(data.session?.user ?? null);
+      setAuthLoading(false);
+    };
+
+    fetchSession();
+
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user ?? null);
+        setAuthLoading(false);
+      },
+    );
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
+  }, []);
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (authLoading) {
+      toast.error("Please wait while we check your authentication");
+      return;
+    }
+
+    if (!user) {
+      toast.error("Please log in to place an order");
+      router.push("/login");
+      return;
+    }
+
     const order = {
       ...formData,
       items: cart,
       total: orderTotal,
     };
 
+    // Get the current session to include the access token
+    const { data: sessionData } = await supabase.auth.getSession();
+    if (!sessionData.session?.access_token) {
+      toast.error("Authentication session expired. Please log in again.");
+      router.push("/login");
+      return;
+    }
+
     const res = await toast.promise(
       fetch("/api/order", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${sessionData.session.access_token}`,
+        },
         body: JSON.stringify(order),
       }),
       {

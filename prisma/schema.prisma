@@ -38,6 +38,11 @@ model Category {
 
 model Order {
   id           String       @id @default(cuid())
+
+  userId       String       // 🔥 Supabase user id (UUID)
+  userEmail    String?      // 🔥 User email from Supabase Auth
+  userDisplayName String?   // 🔥 User display name from Supabase Auth
+
   customerName String
   phone        String
   address      String
@@ -45,9 +50,11 @@ model Order {
 
   status       OrderStatus  @default(pending)
 
-  items        OrderItem[]  // 🔥 relation
+  items        OrderItem[]
 
   createdAt    DateTime     @default(now())
+
+  @@index([userId])
 }
 
 model OrderItem {

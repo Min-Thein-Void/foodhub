@@ -107,41 +107,43 @@ const Navbar: React.FC = () => {
           ))}
         </nav>
 
-        <div className="flex items-center gap-3">
-          <ThemeToggle />
+        <div className="flex items-center gap-2">
+          <div className="hidden md:flex">
+            <ThemeToggle />
+          </div>
 
           <Link
             href="/checkout"
-            className="hidden items-center gap-2 rounded-full bg-orange-50 px-4 py-2 text-sm font-semibold text-orange-700 transition hover:bg-orange-100 dark:bg-orange-500/10 dark:text-orange-200 md:inline-flex"
+            className="inline-flex items-center gap-2 rounded-full border border-orange-200 bg-orange-50 px-3 py-2 text-sm font-semibold text-orange-700 transition hover:bg-orange-100 dark:border-slate-700 dark:bg-orange-500/10 dark:text-orange-200"
           >
             <span className="text-base">🧺</span>
-            <span>Cart</span>
+            <span className="hidden sm:inline">Cart</span>
             <span className="rounded-full bg-orange-500 px-2 py-0.5 text-xs text-white">{totalQty}</span>
           </Link>
 
           {!loading && user ? (
-            <div className="hidden items-center gap-3 md:flex">
-              <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-sm font-medium text-amber-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
+            <div className="hidden items-center gap-2 md:flex">
+              <span className="max-w-xs truncate rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-sm font-medium text-amber-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
                 {user.user_metadata?.displayname || user.email}
               </span>
               <button
                 onClick={confirmLogout}
-                className="rounded-full border border-slate-200 px-3 py-2 text-sm font-semibold text-rose-600 transition hover:bg-rose-50 dark:border-slate-700 dark:text-rose-300 dark:hover:bg-slate-800"
+                className="rounded-2xl border border-slate-200 px-3 py-2 text-sm font-semibold text-rose-600 transition hover:bg-rose-50 dark:border-slate-700 dark:text-rose-300 dark:hover:bg-slate-800"
               >
                 Logout
               </button>
             </div>
           ) : (
-            <div className="hidden items-center gap-3 md:flex">
+            <div className="hidden items-center gap-2 md:flex">
               <Link
                 href="/login"
-                className="rounded-full border border-orange-200 bg-orange-50 px-4 py-2 text-sm font-medium text-orange-700 transition hover:bg-orange-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+                className="rounded-2xl border border-orange-200 bg-orange-50 px-3 py-2 text-sm font-medium text-orange-700 transition hover:bg-orange-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
               >
                 Login
               </Link>
               <Link
                 href="/register"
-                className="rounded-full bg-orange-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-orange-600"
+                className="rounded-2xl bg-orange-500 px-3 py-2 text-sm font-semibold text-white transition hover:bg-orange-600"
               >
                 Sign Up
               </Link>
@@ -182,26 +184,22 @@ const Navbar: React.FC = () => {
           </div>
 
           <div className="mt-4 flex flex-col gap-3 border-t border-slate-200 pt-4 dark:border-slate-700">
-            <Link
-              href="/checkout"
-              onClick={() => setIsOpen(false)}
-              className="flex items-center justify-between rounded-2xl bg-orange-50 px-4 py-3 text-sm font-semibold text-orange-700 transition hover:bg-orange-100 dark:bg-orange-500/10 dark:text-orange-200"
-            >
-              <span>Cart</span>
-              <span className="rounded-full bg-orange-500 px-2 py-0.5 text-xs text-white">{totalQty}</span>
-            </Link>
+            <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-700 dark:bg-slate-800">
+              <span className="text-sm font-medium text-slate-700 dark:text-slate-200">DarkMode</span>
+              <ThemeToggle />
+            </div>
 
             {!loading && user ? (
-              <div className="flex flex-col gap-3">
-                <span className="rounded-2xl bg-slate-100 px-4 py-3 text-sm font-medium text-slate-700 dark:bg-slate-800 dark:text-slate-200">
-                  {user.user_metadata?.displayname || user.email}
+              <div className="space-y-3">
+                <span className="block truncate rounded-2xl bg-slate-100 px-4 py-3 text-sm font-medium text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+                 <span className="dark:text-gray-400 text-gray-600">Logged in as: </span><span className="dark:text-purple-400 text-purple-700 capitalize">{user.user_metadata?.displayname || user.user_metadata?.display_name || user.email}</span>
                 </span>
                 <button
                   onClick={() => {
                     confirmLogout();
                     setIsOpen(false);
                   }}
-                  className="rounded-2xl bg-rose-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-rose-500"
+                  className="w-full rounded-2xl bg-rose-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-rose-500"
                 >
                   Logout
                 </button>
